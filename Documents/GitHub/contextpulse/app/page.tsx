@@ -7,6 +7,7 @@ import { StatCard } from "./components/StatCard";
 import Link from "next/link";
 import { useMemo } from "react";
 import type { ToolCallEvent } from "./hooks/useWebSocket";
+import { LoopGraph } from "./components/LoopGraph";
 export default function Home() {
   const { connected, messages, activeBudgets, alerts, clearAlerts } = useWebSocket();
   const toolCallEvents = useMemo(() => messages.filter((m) => m.event === "tool_call_end").map((m) => (m as { event: "tool_call_end"; data: ToolCallEvent }).data).slice(0, 30), [messages]);
@@ -53,6 +54,12 @@ export default function Home() {
               <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-4">Tool call waterfall</h2>
               <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
                 <Waterfall toolCalls={toolCallEvents} />
+              </div>
+            </div>
+            <div className="mt-6">
+              <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-4">Loop detection</h2>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                <LoopGraph toolCalls={toolCallEvents} loopThreshold={3} />
               </div>
             </div>
           </div>

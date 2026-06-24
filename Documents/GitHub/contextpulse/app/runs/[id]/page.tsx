@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { use } from "react";
+import { LoopGraph } from "../../components/LoopGraph";
 interface ToolCall { toolCallId: string; toolName: string; inputTokens: number; outputTokens: number; totalTokens: number; durationMs: number | null; startedAt: string; }
 interface Alert { id: number; alertType: string; toolName: string | null; tokensUsed: number | null; percentUsed: number | null; firedAt: string; }
 interface RunDetail { runId: string; label: string | null; startedAt: string; totalTokens: number; totalInputTokens: number; totalOutputTokens: number; toolCallCount: number; budget: { used: number; limit: number; percentUsed: number }; budgetStatus: string; }
@@ -64,6 +65,12 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        <div className="max-w-5xl mx-auto px-6 pb-8">
+            <h2 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-4">Tool call frequency</h2>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+              <LoopGraph toolCalls={toolCalls} loopThreshold={3} />
             </div>
           </div>
         </main>
