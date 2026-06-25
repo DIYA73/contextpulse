@@ -26,6 +26,7 @@ export default function Home() {
             <span className="text-xs font-mono text-zinc-500">{connected ? "live" : "disconnected"}</span>
           </div>
           <Link href="/runs" className="text-xs font-mono text-zinc-500 hover:text-zinc-300 border border-zinc-800 rounded px-3 py-1.5">run history →</Link>
+          <Link href="/diff" className="text-xs font-mono text-zinc-500 hover:text-zinc-300 transition-colors border border-zinc-800 hover:border-zinc-700 rounded px-3 py-1.5">run diff →</Link>
         </div>
       </header>
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
