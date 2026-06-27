@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# contextpulse
 
-## Getting Started
+**Real-time Next.js dashboard for [contextpulse-mcp](https://github.com/DIYA73/contextpulse-mcp).**
 
-First, run the development server:
+Watch your AI agent's context budget live — token usage bar, tool call waterfall, loop detection alerts, and full run history. No page refresh required.
+
+---
+
+## Features
+
+- 📊 **Live budget bar** — updates in real time via WebSocket as tokens are consumed
+- 🌊 **Tool call waterfall** — see every tool call the agent made, with token cost per call
+- 🔁 **Loop detection indicator** — highlighted when the MCP server detects a repeated tool pattern
+- ⚠️ **Alert feed** — warning (70%) and critical (90%) threshold events, streamed instantly
+- 📋 **Run history table** — browse past agent runs, filter by session
+- 🔄 **Run diff view** — compare two runs side by side to see what changed
+
+---
+
+## Stack
+
+- **Next.js 14** (App Router)
+- **TypeScript**
+- **Tailwind CSS**
+- **WebSocket** (native browser API, no extra library)
+- **PostgreSQL** (reads from the same DB as the MCP server)
+
+---
+
+## Prerequisites
+
+The MCP server must be running first:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/DIYA73/contextpulse-mcp
+cd contextpulse-mcp
+npm install && npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Getting started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+git clone https://github.com/DIYA73/contextpulse
+cd contextpulse
+npm install
+cp .env.local.example .env.local
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Variable | Default | Description |
+|---|---|---|
+| `DATABASE_URL` | — | PostgreSQL connection (same DB as MCP server) |
+| `NEXT_PUBLIC_WS_URL` | `ws://localhost:3001` | WebSocket endpoint exposed by MCP server |
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Dashboard views
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Route | Description |
+|---|---|
+| `/` | Active run — live budget bar + tool call waterfall |
+| `/runs` | Run history table for the current session |
+| `/runs/[id]` | Single run detail — full tool call list + budget timeline |
+| `/diff/[a]/[b]` | Side-by-side comparison of two runs |
+
+---
+
+## How the real-time flow works
+contextpulse-mcp (MCP server)
+
+↓  emits budget + alert events over WebSocket
+
+contextpulse (this dashboard)
+
+↓  browser connects on mount, receives events
+
+↓  React state updates → UI re-renders instantly
+No polling. The MCP server pushes every token count update and alert to all connected dashboard clients.
+
+---
+
+## Related
+
+- [contextpulse-mcp](https://github.com/DIYA73/contextpulse-mcp) — The MCP server this dashboard connects to
+
+---
+
+## License
+
+MIT
