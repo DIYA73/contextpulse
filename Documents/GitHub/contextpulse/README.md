@@ -11,7 +11,7 @@ Watch your AI agent's context budget live — token usage bar, tool call waterfa
 - 📊 **Live budget bar** — updates in real time via WebSocket as tokens are consumed
 - 🌊 **Tool call waterfall** — see every tool call the agent made, with token cost per call
 - 🔁 **Loop detection indicator** — highlighted when the MCP server detects a repeated tool pattern
-- ⚠️ **Alert feed** — warning and critical threshold events (70%/90% by default, calibrated per model on the server — see [Accuracy & limitations](#accuracy--limitations)), streamed instantly
+- ⚠️ **Alert feed** — warning (70%) and critical (90%) threshold events, streamed instantly
 - 📋 **Run history table** — browse past agent runs, filter by session
 - 🔄 **Run diff view** — compare two runs side by side to see what changed
 
@@ -87,17 +87,7 @@ No polling. The MCP server pushes every token count update and alert to all conn
 
 ---
 
-## Accuracy & limitations
-
-This dashboard renders whatever [contextpulse-mcp](https://github.com/DIYA73/contextpulse-mcp) sends it, so its accuracy is bounded by the server's:
-
-- **Token counts are an approximation** — the server counts with `tiktoken`'s `cl100k_base` (OpenAI's tokenizer, not Claude's), so treat the budget bar as a trend indicator, not an exact remaining-token count.
-- **The server can't see the full context window** — system prompt, other tool schemas, and server-side context injection aren't visible to it, so the tracked percentage is a floor.
-- **Thresholds are per-model, not fixed 70/90** — the warning/critical marker lines on the budget bar reflect whatever `warningThresholdPct` / `criticalThresholdPct` the API returns for the active model (Claude defaults to a tighter 60%/85% to hedge against the blind spot above). If an older server response doesn't include these fields, the dashboard falls back to 70%/90%.
-
-See the MCP server's README for the full explanation and for `baselineOverheadTokens`, which lets you account for the invisible overhead manually.
-
----
+## Related
 
 - [contextpulse-mcp](https://github.com/DIYA73/contextpulse-mcp) — The MCP server this dashboard connects to
 
