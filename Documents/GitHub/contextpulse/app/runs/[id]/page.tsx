@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { use } from "react";
 import { LoopGraph } from "../../components/LoopGraph";
+import { getBudgetColor } from "../../lib/budget-status";
 interface ToolCall { toolCallId: string; toolName: string; inputTokens: number; outputTokens: number; totalTokens: number; durationMs: number | null; startedAt: string; }
 interface Alert { id: number; alertType: string; toolName: string | null; tokensUsed: number | null; percentUsed: number | null; firedAt: string; }
-interface RunDetail { runId: string; label: string | null; startedAt: string; totalTokens: number; totalInputTokens: number; totalOutputTokens: number; toolCallCount: number; budget: { used: number; limit: number; percentUsed: number }; budgetStatus: string; }
+interface RunDetail { runId: string; label: string | null; startedAt: string; totalTokens: number; totalInputTokens: number; totalOutputTokens: number; toolCallCount: number; budget: { used: number; limit: number; percentUsed: number; warningThresholdPct: number; criticalThresholdPct: number }; budgetStatus: string; }
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 export default function RunDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -35,7 +36,7 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
           <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
             <p className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-3">Context budget</p>
             <div className="relative h-3 bg-zinc-800 rounded-full overflow-hidden">
-              <div className={`absolute inset-y-0 left-0 rounded-full ${run.budget.percentUsed >= 90 ? "bg-red-500" : run.budget.percentUsed >= 70 ? "bg-amber-400" : "bg-emerald-500"}`} style={{ width: `${Math.min(run.budget.percentUsed, 100)}%` }} />
+              <div className={`absolute inset-y-0 left-0 rounded-full ${getBudgetColor(run.budget.percentUsed, run.budget.warningThresholdPct, run.budget.criticalThresholdPct)}`} style={{ width: `${Math.min(run.budget.percentUsed, 100)}%` }} />
             </div>
             <div className="flex justify-between mt-2 text-xs font-mono text-zinc-500">
               <span>{run.budget.used.toLocaleString()} used</span><span>{run.budget.percentUsed.toFixed(1)}%</span><span>{run.budget.limit.toLocaleString()} limit</span>

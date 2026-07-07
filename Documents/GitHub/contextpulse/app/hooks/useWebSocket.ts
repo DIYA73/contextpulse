@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 export type BudgetStatus = "ok" | "warning" | "critical" | "overflow";
-export interface Budget { used: number; limit: number; percentUsed: number; }
+export interface Budget { used: number; limit: number; percentUsed: number; warningThresholdPct?: number; criticalThresholdPct?: number; }
 export interface ToolCallEvent { toolCallId: string; runId: string; toolName: string; inputTokens: number; outputTokens: number; totalTokens: number; durationMs: number | null; startedAt: string; completedAt: string | null; budget: Budget; budgetStatus: string; }
 export interface BudgetEvent { runId: string; budget: Budget; }
 export interface LoopEvent { runId: string; toolName: string; count: number; }

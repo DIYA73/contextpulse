@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { getBudgetColor } from "../lib/budget-status";
 interface ToolSummary { toolName: string; callCount: number; totalTokens: number; avgTokens: number; isLoop: boolean; }
-interface RunDiffSide { runId: string; label: string | null; startedAt: string; totalTokens: number; totalInputTokens: number; totalOutputTokens: number; toolCallCount: number; contextLimit: number; percentUsed: number; budgetStatus: string; alertCount: number; loopCount: number; tools: ToolSummary[]; }
+interface RunDiffSide { runId: string; label: string | null; startedAt: string; totalTokens: number; totalInputTokens: number; totalOutputTokens: number; toolCallCount: number; contextLimit: number; percentUsed: number; budgetStatus: string; warningThresholdPct: number; criticalThresholdPct: number; alertCount: number; loopCount: number; tools: ToolSummary[]; }
 interface ToolDiff { toolName: string; countA: number; countB: number; tokensA: number; tokensB: number; deltaTokens: number; onlyIn: "a" | "b" | "both"; loopA: boolean; loopB: boolean; }
 interface DiffResult { runA: RunDiffSide; runB: RunDiffSide; diff: { totalTokensDelta: number; totalTokensDeltaPercent: number; tokenWinner: "a" | "b" | "tie"; toolCallCountDelta: number; toolCallWinner: "a" | "b" | "tie"; percentUsedDelta: number; budgetWinner: "a" | "b" | "tie"; tools: ToolDiff[]; newLoopsInB: string[]; resolvedLoopsFromA: string[]; summary: string; }; }
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
@@ -28,7 +29,7 @@ function RunCard({ run, side }: { run: RunDiffSide; side: "A" | "B" }) {
         ))}
       </div>
       <div className="mt-3 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-        <div className={`h-full rounded-full ${run.percentUsed >= 90 ? "bg-red-500" : run.percentUsed >= 70 ? "bg-amber-400" : "bg-emerald-500"}`} style={{ width: `${Math.min(run.percentUsed, 100)}%` }} />
+        <div className={`h-full rounded-full ${getBudgetColor(run.percentUsed, run.warningThresholdPct, run.criticalThresholdPct)}`} style={{ width: `${Math.min(run.percentUsed, 100)}%` }} />
       </div>
     </div>
   );

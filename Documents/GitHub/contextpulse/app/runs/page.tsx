@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-interface Run { runId: string; label: string | null; startedAt: string; totalTokens: number; toolCallCount: number; budget: { used: number; limit: number; percentUsed: number }; budgetStatus: string; }
+import { getBudgetColor } from "../lib/budget-status";
+interface Run { runId: string; label: string | null; startedAt: string; totalTokens: number; toolCallCount: number; budget: { used: number; limit: number; percentUsed: number; warningThresholdPct: number; criticalThresholdPct: number }; budgetStatus: string; }
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 function badge(s: string) { if (s === "critical" || s === "overflow") return "bg-red-900/40 text-red-400 border-red-800"; if (s === "warning") return "bg-amber-900/40 text-amber-400 border-amber-800"; return "bg-emerald-900/20 text-emerald-400 border-emerald-900"; }
 export default function RunsPage() {
@@ -40,7 +41,7 @@ export default function RunsPage() {
                   <div><p className="text-[10px] font-mono text-zinc-600 uppercase">tokens</p><p className="text-sm font-mono text-zinc-300">{run.totalTokens.toLocaleString()}</p></div>
                   <div><p className="text-[10px] font-mono text-zinc-600 uppercase">tool calls</p><p className="text-sm font-mono text-zinc-300">{run.toolCallCount}</p></div>
                   <div><p className="text-[10px] font-mono text-zinc-600 uppercase">budget</p><p className="text-sm font-mono text-zinc-300">{run.budget.percentUsed.toFixed(1)}%</p></div>
-                  <div className="flex-1"><div className="h-1 bg-zinc-800 rounded-full overflow-hidden"><div className={`h-full rounded-full ${run.budget.percentUsed >= 90 ? "bg-red-500" : run.budget.percentUsed >= 70 ? "bg-amber-400" : "bg-emerald-500"}`} style={{ width: `${Math.min(run.budget.percentUsed, 100)}%` }} /></div></div>
+                  <div className="flex-1"><div className="h-1 bg-zinc-800 rounded-full overflow-hidden"><div className={`h-full rounded-full ${getBudgetColor(run.budget.percentUsed, run.budget.warningThresholdPct, run.budget.criticalThresholdPct)}`} style={{ width: `${Math.min(run.budget.percentUsed, 100)}%` }} /></div></div>
                 </div>
               </Link>
             ))}
