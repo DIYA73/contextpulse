@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+.next/
+.env
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# App lib (auto-generated)
+app/lib/
+
+# Ignore everything outside this repo
+../
+../../
+../../../
